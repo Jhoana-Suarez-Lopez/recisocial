@@ -1,0 +1,61 @@
+-- Tabla de Usuarios
+CREATE TABLE Usuarios (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    contraseña VARCHAR(255) NOT NULL -- Usar hash en producción
+);
+
+-- Tabla de Categorías
+CREATE TABLE Categorias (
+    id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_categoria VARCHAR(50) NOT NULL
+);
+
+-- Tabla de Recetas
+CREATE TABLE Recetas (
+    id_receta INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    tiempo_preparacion INT, -- en minutos
+    dificultad ENUM('Fácil', 'Media', 'Difícil'),
+    id_categoria INT,
+    id_usuario INT,
+    FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de Ingredientes
+CREATE TABLE Ingredientes (
+    id_ingrediente INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla de Ingredientes por Receta
+CREATE TABLE Receta_Ingredientes (
+    id_receta INT,
+    id_ingrediente INT,
+    cantidad VARCHAR(50),
+    PRIMARY KEY (id_receta, id_ingrediente),
+    FOREIGN KEY (id_receta) REFERENCES Recetas(id_receta),
+    FOREIGN KEY (id_ingrediente) REFERENCES Ingredientes(id_ingrediente)
+);
+
+-- Tabla de Pasos de Preparación
+CREATE TABLE Pasos (
+    id_paso INT PRIMARY KEY AUTO_INCREMENT,
+    id_receta INT,
+    numero_paso INT,
+    descripcion TEXT,
+    FOREIGN KEY (id_receta) REFERENCES Recetas(id_receta)
+);
+
+-- Tabla de Recetas Favoritas por Usuario
+CREATE TABLE Favoritos (
+    id_usuario INT,
+    id_receta INT,
+    fecha_guardado DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_receta),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+    FOREIGN KEY (id_receta) REFERENCES Recetas(id_receta)
+);
